@@ -1,37 +1,39 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
-
-import WebApp from '@twa-dev/sdk'
+import './App.css';
+import { TonConnectButton } from '@tonconnect/ui-react';
+import { useTonConnect } from './hooks/useTonConnect';
+import { useCounterContract } from './hooks/useCounterContract';
+import '@twa-dev/sdk';
 
 function App() {
-  const [count, setCount] = useState(0)
+  const { connected } = useTonConnect();
+  const { value, address, sendIncrement } = useCounterContract();
 
   return (
-    <>
-      <div>
-        <a href="https://vitejs.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
+    <div className='App'>
+      <div className='Container'>
+        <TonConnectButton />
+
+        <div className='Card'>
+          <b>Counter Address</b>
+          <div className='Hint'>{address?.slice(0, 30) + '...'}</div>
+        </div>
+
+        <div className='Card'>
+          <b>Counter Value</b>
+          <div>{value ?? 'Loading...'}</div>
+        </div>
+
+        <a
+          className={`Button ${connected ? 'Active' : 'Disabled'}`}
+          onClick={() => {
+            sendIncrement();
+          }}
+        >
+          Increment
         </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
       </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          计数是 {count}
-        </button>
-      </div>
-        {/* 在此处添加带有警告回调的按钮 */}
-      <div className="card">
-        <button onClick={() => WebApp.showAlert(`Hello World! Current count is ${count}`)}>
-            显示警告
-        </button>
-      </div>
-    </>
-  )
+    </div>
+  );
 }
 
 export default App
